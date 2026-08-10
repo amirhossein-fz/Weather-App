@@ -4,10 +4,10 @@ import Weathercard from "./component/Weathercard";
 function App(){
   return (
     <>
-      <Searchbar/>
-      <Weathercard/>
+        <Searchbar />
+        <Weathercard />
     </>
-  )
+  );
 }
 
 export default App

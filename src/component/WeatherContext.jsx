@@ -12,7 +12,7 @@ const [darkmode, setDarkmode] = useState(() => {
   if (savedTheme) {
     return savedTheme === "dark"
   }
-  return window.matchMedia("(prefers-color-scheme: dark)")
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
 })
 
 useEffect(() => {

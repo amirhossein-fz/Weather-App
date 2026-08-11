@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const  WeatherContext = createContext()
 
@@ -6,7 +6,18 @@ export function WeatherProvider({children}) {
 
 const [city, setCity] = useState("")
 
-const [darkmode, setDarkmode] = useState()
+const [darkmode, setDarkmode] = useState(() => {
+  const savedTheme = localStorage.getItem("theme")
+
+  if (savedTheme) {
+    return savedTheme === "dark"
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)")
+})
+
+useEffect(() => {
+  localStorage.setItem("theme", darkmode ? "dark" : "light");
+}, [darkmode]);
 
 const [location, setLocation] = useState(null);
 
@@ -50,7 +61,7 @@ async function searchWeather(cityName) {
 }
 
     return(
-        <WeatherContext.Provider value={{city, setCity, location, weather, searchWeather, loading, error}}>
+        <WeatherContext.Provider value={{city, setCity, darkmode, setDarkmode, location, weather, searchWeather, loading, error,}}>
                 {children}
         </WeatherContext.Provider>
     )

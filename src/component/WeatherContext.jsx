@@ -12,11 +12,12 @@ const [darkmode, setDarkmode] = useState(() => {
   if (savedTheme) {
     return savedTheme === "dark"
   }
-  return window.matchMedia("(prefers-color-scheme: dark)")
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
 })
 
 useEffect(() => {
   localStorage.setItem("theme", darkmode ? "dark" : "light");
+  document.documentElement.classList.toggle("dark", darkmode);
 }, [darkmode]);
 
 const [location, setLocation] = useState(null);
@@ -27,6 +28,7 @@ const [loading, setLoading] = useState(false)
 
 const [error, setError ] = useState("")
 
+const [forecast, setForecast] = useState(null)
 async function searchWeather(cityName) {
   setLoading(true);
   setError("");
@@ -46,12 +48,13 @@ async function searchWeather(cityName) {
     setLocation(result);
 
     const weatherResponse = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${result.latitude}&longitude=${result.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=kmh`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${result.latitude}&longitude=${result.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=kmh`,
     );
 
     const weatherData = await weatherResponse.json();
 
     setWeather(weatherData.current);
+    setForecast(weatherData.daily); 
   } catch (error) {
     setError(error.message);
     setWeather(null);
@@ -61,7 +64,7 @@ async function searchWeather(cityName) {
 }
 
     return(
-        <WeatherContext.Provider value={{city, setCity, darkmode, setDarkmode, location, weather, searchWeather, loading, error,}}>
+        <WeatherContext.Provider value={{city, setCity, darkmode, setDarkmode, location, weather, searchWeather, loading, error, forecast}}>
                 {children}
         </WeatherContext.Provider>
     )

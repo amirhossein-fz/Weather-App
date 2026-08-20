@@ -35,8 +35,12 @@ async function searchWeather(cityName) {
 
   try {
     const response = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${cityName}&count=1`,
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1`,
     );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch location")
+    }
 
     const data = await response.json();
     const result = data.results?.[0];
@@ -51,6 +55,9 @@ async function searchWeather(cityName) {
       `https://api.open-meteo.com/v1/forecast?latitude=${result.latitude}&longitude=${result.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=kmh`,
     );
 
+    if (!weatherResponse.ok) {
+      throw new Error("Failed to fetch weather data");
+    }
     const weatherData = await weatherResponse.json();
 
     setWeather(weatherData.current);
@@ -58,6 +65,8 @@ async function searchWeather(cityName) {
   } catch (error) {
     setError(error.message);
     setWeather(null);
+    // setLocation(null);
+    // setForecast(null);
   } finally {
     setLoading(false);
   }

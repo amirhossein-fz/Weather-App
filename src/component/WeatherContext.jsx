@@ -39,7 +39,7 @@ async function searchWeather(cityName) {
     );
 
     if (!response.ok) {
-      throw new Error("Failed to fetch location")
+      throw new Error("Failed to fetch location");
     }
 
     const data = await response.json();
@@ -49,31 +49,44 @@ async function searchWeather(cityName) {
       throw new Error("City not found");
     }
 
-    setLocation(result);
+    await fetchWeatherByLocation(result);
+  } catch (error) {
+    setError(error.message);
+    setWeather(null);
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function fetchWeatherByLocation(locationData) {
+  setLoading(true);
+  setError("");
+
+  try {
+    setLocation(locationData);
 
     const weatherResponse = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${result.latitude}&longitude=${result.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=kmh`,
+      `https://api.open-meteo.com/v1/forecast?latitude=${locationData.latitude}&longitude=${locationData.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&wind_speed_unit=kmh`,
     );
 
     if (!weatherResponse.ok) {
       throw new Error("Failed to fetch weather data");
     }
+
     const weatherData = await weatherResponse.json();
 
     setWeather(weatherData.current);
-    setForecast(weatherData.daily); 
+    setForecast(weatherData.daily);
   } catch (error) {
     setError(error.message);
     setWeather(null);
-    // setLocation(null);
-    // setForecast(null);
   } finally {
     setLoading(false);
   }
 }
 
     return(
-        <WeatherContext.Provider value={{city, setCity, darkmode, setDarkmode, location, weather, searchWeather, loading, error, forecast}}>
+        <WeatherContext.Provider value={{city, setCity, darkmode, setDarkmode, location, weather, searchWeather,fetchWeatherByLocation, loading, error, forecast}}>
                 {children}
         </WeatherContext.Provider>
     )

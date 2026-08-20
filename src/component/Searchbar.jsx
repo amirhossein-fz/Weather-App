@@ -3,7 +3,7 @@ import { CiLight, CiDark, CiSearch } from "react-icons/ci";
 import { useState } from "react";
 
 function Searchbar() {
-    const { setCity, searchWeather, darkmode, setDarkmode } = useWeather();
+    const { setCity, searchWeather,fetchWeatherByLocation, darkmode, setDarkmode } = useWeather();
     const [ inputError, setInputError ] = useState("");
     const [ inputValue, setInputvalue ] = useState("");
     const [suggestions, setSuggestions] = useState([]);
@@ -23,7 +23,6 @@ function Searchbar() {
       }
 
       const data = await response.json()
-      console.log(data.results)
       setSuggestions(data.results || [])
     }
 
@@ -45,7 +44,7 @@ function Searchbar() {
     setInputvalue(suggestion.name);
     setSuggestions([]);
     setCity(suggestion.name);
-    searchWeather(suggestion.name);
+    fetchWeatherByLocation(suggestion);
   }
 
   return (

@@ -7,7 +7,7 @@ function App(){
   return (
     <div
       className={
-        darkmode ? "dark min-h-screen bg-gray-900" : "min-h-screen bg-white"
+        darkmode ? "dark min-h-screen bg-gray-900" : "min-h-screen bg-gray-200"
       }>
       <Searchbar />
       <Weathercard />
